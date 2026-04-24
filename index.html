@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruda Ruda - Aguachiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Pirata+One&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #0f0f0f;
+            --text-primary: #f5f5f5;
+            --text-secondary: #888;
+            --accent: #ffffff;
+            --accent-dim: rgba(255,255,255,0.15);
+            --border: #2a2a2a;
+            --border-bright: rgba(255,255,255,0.2);
+        }
+
+        body {
+            font-family: 'Pirata One', cursive;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── BACKGROUND PARTICLES ── */
+        .ocean-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), transparent);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        @keyframes rise {
+            0%   { bottom: -100px; transform: translateX(0) scale(1); opacity: 0; }
+            10%  { opacity: 0.2; }
+            90%  { opacity: 0.2; }
+            100% { bottom: 100vh; transform: translateX(100px) scale(1.5); opacity: 0; }
+        }
+
+        .floating-seafood {
+            position: fixed;
+            font-size: 2.5rem;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            25%  { transform: translate(30px,-20px) rotate(3deg); }
+            50%  { transform: translate(0,-40px) rotate(0deg); }
+            75%  { transform: translate(-30px,-20px) rotate(-3deg); }
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5,5,5,0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        .logo {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.8rem;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+            font-family: 'Pirata One', cursive;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 1px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover { color: #fff; }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50%       { opacity: 1; }
+        }
+
+        .hero-logo-img {
+            position: relative;
+            z-index: 10;
+            width: min(780px, 90vw);
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 1.4s ease both;
+            filter: brightness(1.05);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-tagline {
+            position: relative;
+            z-index: 10;
+            font-family: 'Pirata One', cursive;
+            font-size: 0.95rem;
+            letter-spacing: 6px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 0.8s forwards;
+            margin-bottom: 2.5rem;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* Social icons row in hero */
+        .hero-socials {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 1.2s forwards;
+        }
+
+        .hero-social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            font-family: 'Pirata One', cursive;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .hero-social-link:hover {
+            color: #fff;
+            border-color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .hero-social-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2.5rem; left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 10;
+            color: #555;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-15px); }
+            60% { transform: translateX(-50%) translateY(-8px); }
+        }
+
+        /* ── MENU SECTION ── */
+        .menu-section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 3.5rem;
+            display: inline-block;
+            position: relative;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            font-family: 'Pirata One', cursive;
+            text-transform: uppercase;
+        }
+
+        /* Category filter bar */
+        .menu-categories {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+            position: sticky;
+            top: 74px;
+            z-index: 100;
+            background: rgba(5,5,5,0.92);
+            backdrop-filter: blur(12px);
+            padding: 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .category-btn {
+            padding: 0.7rem 1.6rem;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.85rem;
+            border-radius: 25px;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            color: #fff;
+            border-color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* Menu grid & cards */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .menu-card:hover::before { transform: scaleX(1); }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item-title {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .menu-portion {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-family: 'Pirata One', cursive;
+            font-weight: 400;
+        }
+
+        .menu-price {
+            font-size: 1.15rem;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            text-align: right;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .price-secondary {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .menu-description {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .spicy-indicator {
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* Extras / ostrería */
+        .extras-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .extras-title {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .extras-text { color: var(--text-secondary); font-size: 0.95rem; font-family: 'Pirata One', cursive; }
+
+        .ostreeria-note {
+            background: rgba(255,255,255,0.02);
+            border-left: 2px solid rgba(255,255,255,0.4);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .ostreeria-title {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── INFO SECTION ── */
+        .info-section {
+            background: #000;
+            padding: 5rem 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+        }
+
+        .info-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .info-card {
+            background: #0a0a0a;
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .info-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+
+        .info-card h3 {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .hours-list { list-style: none; text-align: left; }
+
+        .hours-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .hours-list li:hover { color: #fff; padding-left: 4px; }
+
+        .phone-number {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin: 1rem 0;
+            font-family: 'Pirata One', cursive;
+        }
+
+        /* Buttons */
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.2rem;
+            padding: 0.9rem 2rem;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .contact-btn:hover {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.1);
+        }
+
+        .contact-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.9rem 2rem;
+            background: transparent;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-family: 'Pirata One', cursive;
+        }
+
+        .contact-btn-outline:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Social links in info section */
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Pirata One', cursive;
+        }
+
+        .social-link:last-child { border-bottom: none; }
+        .social-link:hover { color: #fff; }
+        .social-link svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #000;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-logo {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .footer-sub {
+            color: var(--text-secondary);
+            font-family: 'Pirata One', cursive;
+            letter-spacing: 4px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-socials {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-social {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            font-family: 'Pirata One', cursive;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .footer-social:hover { color: #fff; }
+        .footer-social svg { width: 15px; height: 15px; fill: currentColor; }
+
+        .footer-copy { font-size: 0.8rem; color: #333; font-family: 'Pirata One', cursive; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 2.5rem; }
+            .hero-logo-img { width: 90vw; }
+            .menu-categories {
+                position: relative;
+                top: 0;
+                border-radius: 15px;
+                padding: 0.5rem;
+            }
+            .category-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+            }
+            nav { padding: 1rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ocean-bg" id="oceanBg"></div>
+
+    <div class="floating-seafood" style="top:10%;left:5%;animation-delay:0s;">🦐</div>
+    <div class="floating-seafood" style="top:30%;left:90%;animation-delay:7s;">🐟</div>
+    <div class="floating-seafood" style="top:60%;left:8%;animation-delay:12s;">🦪</div>
+    <div class="floating-seafood" style="top:80%;left:85%;animation-delay:18s;">🦀</div>
+    <div class="floating-seafood" style="top:45%;left:95%;animation-delay:5s;">🐙</div>
+    <div class="floating-seafood" style="top:70%;left:50%;animation-delay:15s;">🦐</div>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="logo">Cruda Ruda</div>
+        <ul class="nav-links">
+            <li><a href="#menu">Menú</a></li>
+            <li><a href="#info">Contacto</a></li>
+            <li><a href="tel:3324961391">📞 332 496 1391</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+        <!-- Logo image, large and centered -->
+        <img
+            src="1776974929096_image.png"
+            alt="Cruda Ruda Aguachiles"
+            class="hero-logo-img"
+        >
+
+        <p class="hero-tagline">Mariscos frescos preparados al momento</p>
+
+        <!-- Social quick-links -->
+        <div class="hero-socials">
+            <a href="https://www.instagram.com/cruda_ruda/" target="_blank" rel="noopener" class="hero-social-link">
+                <!-- Instagram icon -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                Instagram
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=100054600812939" target="_blank" rel="noopener" class="hero-social-link">
+                <!-- Facebook icon -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Facebook
+            </a>
+            <a href="https://wa.me/523324961391" target="_blank" rel="noopener" class="hero-social-link">
+                <!-- WhatsApp icon -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+            </a>
+        </div>
+
+        <div class="scroll-indicator" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- MENU -->
+    <section id="menu" class="menu-section">
+        <div class="section-header">
+            <h2 class="section-title">Menú Completo</h2>
+            <p class="section-subtitle">Frescos y preparados al momento</p>
+        </div>
+
+        <div class="menu-categories">
+            <button class="category-btn active" onclick="filterMenu('all', event)">Todo</button>
+            <button class="category-btn" onclick="filterMenu('entradas', event)">Una entrada?</button>
+            <button class="category-btn" onclick="filterMenu('lumbre', event)">En la lumbre</button>
+            <button class="category-btn" onclick="filterMenu('comer', event)">Aguachiles & más!</button>
+            <button class="category-btn" onclick="filterMenu('tomar', event)">Y pa' tomar, mi amor?</button>
+        </div>
+
+        <div class="menu-grid" id="menuGrid">
+            <!-- ENTRADAS -->
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Entradita de camarón</div>
+                        <div class="menu-description">Camarón curtido & al centro cocido, salsa a elegir</div>
+                    </div>
+                    <div class="menu-price">$230</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Marisquito pa' picar</div>
+                        <div class="menu-description">Camarón curtido & cocido salteado sobre cecina -pídelo con rallo amor-</div>
+                    </div>
+                    <div class="menu-price">$260</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">La norteña</div>
+                        <div class="menu-description">Tostada de camarón curtido con chicharrón en aceite</div>
+                    </div>
+                    <div class="menu-price">$120</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Ceviche sierra</div>
+                        <div class="menu-description">Toro en Mazatlán, serranito rallado & cebolla morada -de temporada-</div>
+                    </div>
+                    <div class="menu-price">$190 <span class="price-secondary">$120 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Boatana cecina</div>
+                        <div class="menu-description">Cecina horneada con chiltepín sazonada con salsas</div>
+                    </div>
+                    <div class="menu-price">$240 <span class="price-secondary">$180 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="entradas">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Tostada de carreta</div>
+                        <div class="menu-description">Camarón cocido con limón, sal, pimienta & un toque de cebolla</div>
+                    </div>
+                    <div class="menu-price">$70</div>
+                </div>
+            </div>
+
+            <!-- EN LA LUMBRE -->
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Camarón zarandeado <span class="menu-portion">(16 & 8 pzas)</span></div>
+                    </div>
+                    <div class="menu-price">$270 <span class="price-secondary">$170 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Ostión zarandeado <span class="menu-portion">(12 & 6 pzas)</span></div>
+                    </div>
+                    <div class="menu-price">$230 <span class="price-secondary">$150 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Atún zarandeado <span class="menu-portion">(medallón de atún)</span></div>
+                    </div>
+                    <div class="menu-price">$240</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Pulpo zarandeado <span class="menu-portion">(pulpo completo de 350gr)</span></div>
+                    </div>
+                    <div class="menu-price">$440</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Callo zarandeado <span class="menu-portion">(100gr de callo)</span></div>
+                    </div>
+                    <div class="menu-price">$360</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="lumbre">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Taco zarandeado</div>
+                        <div class="menu-description">Camarón $110 | Atún $120 | Pulpo $140</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PA' COMER - AGUACHILES -->
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Pícale Negro <span class="spicy-indicator">🌶️🌶️</span></div>
+                        <div class="menu-description">Salsas negras & chiltepín</div>
+                    </div>
+                    <div class="menu-price">$240 orden <span class="price-secondary">$160 media | $90 tostada</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Verde Bendito <span class="spicy-indicator">🌶️🌶️🌶️</span></div>
+                        <div class="menu-description">Salsa a base de chile serrano</div>
+                    </div>
+                    <div class="menu-price">$240 orden <span class="price-secondary">$160 media | $90 tostada</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">El Rojito <span class="spicy-indicator">🌶️🌶️🌶️</span></div>
+                        <div class="menu-description">Chiltepín & chile de árbol</div>
+                    </div>
+                    <div class="menu-price">$240 orden <span class="price-secondary">$160 media | $90 tostada</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Aceitito <span class="spicy-indicator">🌶️🌶️🌶️</span></div>
+                        <div class="menu-description">Mezcla de chiles tostados en aceite</div>
+                    </div>
+                    <div class="menu-price">$240 orden <span class="price-secondary">$160 media | $90 tostada</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Atuncito <span class="spicy-indicator">🌶️</span></div>
+                        <div class="menu-description">Salsas negras & barricada de chiles</div>
+                    </div>
+                    <div class="menu-price">$260 orden <span class="price-secondary">$170 media | $100 tostada</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Cevichito</div>
+                        <div class="menu-description">Ceviche clásico de camarón & salsa a elegir</div>
+                    </div>
+                    <div class="menu-price">$240 orden <span class="price-secondary">$160 media | $90 tostada</span></div>
+                </div>
+            </div>
+
+            <!-- COCTELES Y MÁS -->
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Coctelón</div>
+                        <div class="menu-description">Coctel clásico o verde con marisco a elegir</div>
+                    </div>
+                    <div class="menu-price">$180 lt <span class="price-secondary">$120 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Coctelón R</div>
+                        <div class="menu-description">Camarón curtido, cocido, ostión afún & ceviche de sierra</div>
+                    </div>
+                    <div class="menu-price">$220 lt <span class="price-secondary">$140 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Taquito</div>
+                        <div class="menu-description">Taquito dorado de papa o frijol, top de marisco a elegir en salsa de aceite o negra</div>
+                    </div>
+                    <div class="menu-price">$90</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Tostirudos</div>
+                        <div class="menu-description">Tostitos rústicos o dorados con aguachile o ceviche</div>
+                    </div>
+                    <div class="menu-price">$170</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Charolita <span class="spicy-indicator">🌶️🌶️</span> <span class="menu-portion">(chiltepín & 350gr de marisco a elegir)</span></div>
+                        <div class="menu-description">Camarón curtido / Camarón cocido / Atún</div>
+                    </div>
+                    <div class="menu-price">$350</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Guacorito</div>
+                        <div class="menu-description">Aguacate relleno de marisco & salsa a elegir</div>
+                    </div>
+                    <div class="menu-price">$160</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Sashimi R</div>
+                        <div class="menu-description">250gr de atún AAA laminado en salsa negra especial</div>
+                    </div>
+                    <div class="menu-price">$350 <span class="price-secondary">$210 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="comer">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Ostiones R</div>
+                        <div class="menu-description">Ostión fresco coronado con atún AAA laminado</div>
+                    </div>
+                    <div class="menu-price">$220 <span class="price-secondary">$150 1/2</span></div>
+                </div>
+            </div>
+
+            <!-- OSTRERÍA -->
+            <div class="menu-card" data-category="comer" style="grid-column: 1 / -1;">
+                <div class="ostreeria-note">
+                    <div class="ostreeria-title">🦪 Ostreería</div>
+                    <div class="menu-description">Preguntar disponibilidad y precio: Ostiones, Callo, Almejas</div>
+                </div>
+            </div>
+
+            <!-- EXTRAS -->
+            <div class="menu-card" data-category="comer" style="grid-column: 1 / -1;">
+                <div class="extras-section">
+                    <div class="extras-title">Extras para combinados</div>
+                    <div class="extras-text">Con camarón cocido +$20 | Con pulpo +$100 | Con cecina +$50</div>
+                </div>
+            </div>
+
+            <!-- BEBIDAS -->
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Ballena Pacífico</div></div>
+                    <div class="menu-price">$90</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Chiringuita <span class="menu-portion">(pacífico o coronita de 1/4)</span></div>
+                    </div>
+                    <div class="menu-price">$30</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Lata Pacífico</div></div>
+                    <div class="menu-price">$40</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Lata Pacífico Especial <span class="menu-portion">(con su top de cecina & camarón)</span></div>
+                    </div>
+                    <div class="menu-price">$60</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Michelarga</div>
+                        <div class="menu-description">La michelada clásica con su pacífico</div>
+                    </div>
+                    <div class="menu-price">$100 lt <span class="price-secondary">$60 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Michelarga Especial</div>
+                        <div class="menu-description">Con su top de ceviche & camarón</div>
+                    </div>
+                    <div class="menu-price">$160 lt <span class="price-secondary">$80 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Rusa</div></div>
+                    <div class="menu-price">$100 lt <span class="price-secondary">$60 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div>
+                        <div class="menu-item-title">Limonada <span class="menu-portion">(mineral o natural)</span></div>
+                    </div>
+                    <div class="menu-price">$60 lt <span class="price-secondary">$40 1/2</span></div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Refresquito</div></div>
+                    <div class="menu-price">$40</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Agua de sabor</div></div>
+                    <div class="menu-price">$40</div>
+                </div>
+            </div>
+
+            <div class="menu-card" data-category="tomar">
+                <div class="menu-header">
+                    <div><div class="menu-item-title">Pastel de elote 3 leches</div></div>
+                    <div class="menu-price">$70</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFO SECTION -->
+    <section id="info" class="info-section">
+        <div class="info-grid">
+
+            <!-- Horario -->
+            <div class="info-card">
+                <span class="info-icon">⏰</span>
+                <h3>Horario</h3>
+                <ul class="hours-list">
+                    <li><span>Lunes – Jueves</span><span>11:00 – 20:00</span></li>
+                    <li><span>Viernes – Sábado</span><span>11:00 – 21:00</span></li>
+                    <li><span>Domingo</span><span>12:00 – 18:00</span></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div class="info-card">
+                <span class="info-icon">📞</span>
+                <h3>Contacto</h3>
+                <div class="phone-number">332 496 1391</div>
+                <p style="color:var(--text-secondary);font-size:.9rem;margin:.5rem 0 1rem;font-family:'Pirata One',cursive;">Todos nuestros platillos son frescos y preparados al momento.</p>
+                <a href="tel:3324961391" class="contact-btn">Llamar Ahora</a>
+                <br>
+                <a href="https://wa.me/523324961391" target="_blank" rel="noopener" class="contact-btn-outline" style="margin-top:.8rem;">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    WhatsApp
+                </a>
+            </div>
+
+            <!-- Ubicación y redes -->
+            <div class="info-card">
+                <span class="info-icon">📍</span>
+                <h3>Encuéntranos</h3>
+                <div class="social-links">
+                    <a href="https://www.google.com/maps/place/Cruda+Ruda/@20.7608632,-103.4021687,17.25z/data=!4m14!1m7!3m6!1s0x8428afbc8fea9bc7:0x8819ec3d035a8762!2sCruda+Ruda!8m2!3d20.7608935!4d-103.3999761!16s%2Fg%2F11kc7jbxx4!3m5!1s0x8428afbc8fea9bc7:0x8819ec3d035a8762!8m2!3d20.7608935!4d-103.3999761!16s%2Fg%2F11kc7jbxx4?entry=ttu&g_ep=EgoyMDI2MDQyMS4wIKXMDSoASAFQAw%3D%3D"
+                       target="_blank" rel="noopener" class="social-link">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        Ver en Google Maps
+                    </a>
+                    <a href="https://www.instagram.com/cruda_ruda/" target="_blank" rel="noopener" class="social-link">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        @cruda_ruda
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=100054600812939" target="_blank" rel="noopener" class="social-link">
+                        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        Cruda Ruda Facebook
+                    </a>
+                    <a href="https://wa.me/523324961391" target="_blank" rel="noopener" class="social-link">
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        33 2496 1391
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">Cruda Ruda</div>
+        <p class="footer-sub">Aguachiles · Mariscos Frescos</p>
+        <div class="footer-socials">
+            <a href="https://www.instagram.com/cruda_ruda/" target="_blank" rel="noopener" class="footer-social">
+                <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                Instagram
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=100054600812939" target="_blank" rel="noopener" class="footer-social">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Facebook
+            </a>
+            <a href="https://wa.me/523324961391" target="_blank" rel="noopener" class="footer-social">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+            </a>
+            <a href="https://www.google.com/maps/place/Cruda+Ruda/@20.7608632,-103.4021687,17.25z" target="_blank" rel="noopener" class="footer-social">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                Ubicación
+            </a>
+        </div>
+        <p class="footer-copy">© 2026 Cruda Ruda. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Bubbles
+        function createBubble() {
+            const b = document.createElement('div');
+            b.className = 'bubble';
+            const s = Math.random() * 50 + 10;
+            b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*8+12}s`;
+            document.getElementById('oceanBg').appendChild(b);
+            setTimeout(() => b.remove(), 20000);
+        }
+        setInterval(createBubble, 2000);
+
+        // Navbar scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 80) {
+                nav.style.background = 'rgba(0,0,0,0.98)';
+                nav.style.padding = '0.9rem 3rem';
+            } else {
+                nav.style.background = 'rgba(5,5,5,0.9)';
+                nav.style.padding = '1.2rem 3rem';
+            }
+        });
+
+        // Menu filter
+        function filterMenu(category, event) {
+            const cards = document.querySelectorAll('.menu-card');
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            if (event && event.target) event.target.classList.add('active');
+            cards.forEach(card => {
+                const show = category === 'all' || card.getAttribute('data-category') === category;
+                if (show) {
+                    card.style.display = 'block';
+                    setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 10);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(15px)';
+                    setTimeout(() => { card.style.display = 'none'; }, 280);
+                }
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const t = document.querySelector(a.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
